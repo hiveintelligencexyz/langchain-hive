@@ -1,9 +1,9 @@
 # example.py
-from langchain_hive import HiveIntelligence
+from langchain_hive import HiveSearch
 import os
 
 # Initialize the tool
-tool = HiveIntelligence(
+tool = HiveSearch(
     api_key= os.environ["HIVE_INTELLIGENCE_API_KEY"]
 )
 

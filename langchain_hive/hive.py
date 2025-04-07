@@ -9,18 +9,18 @@ from langchain_core.callbacks import (
 from langchain_core.tools import BaseTool, ToolException
 from pydantic import BaseModel, Field
 
-class HiveIntelligenceMessage(BaseModel):
-    """Message format for Hive Intelligence API"""
+class HiveSearchMessage(BaseModel):
+    """Message format for Hive Search API"""
     role: str = Field(description="Role of the message sender - 'user' or 'assistant'")
     content: str = Field(description="Content of the message")
 
-class HiveIntelligenceInput(BaseModel):
-    """Input for HiveIntelligence"""
+class HiveSearchInput(BaseModel):
+    """Input for HiveSearch"""
     prompt: Optional[str] = Field(
         default=None,
         description="The query text to be processed (required if messages not provided)"
     )
-    messages: Optional[List[HiveIntelligenceMessage]] = Field(
+    messages: Optional[List[HiveSearchMessage]] = Field(
         default=None,
         description="Conversation history in chat format (required if prompt not provided)"
     )
@@ -45,8 +45,8 @@ class HiveIntelligenceInput(BaseModel):
         description="User wallet address for personalized results"
     )
 
-class HiveIntelligenceAPIWrapper:
-    """Wrapper for Hive Intelligence API."""
+class HiveSearchAPIWrapper:
+    """Wrapper for Hive Search API."""
 
     def __init__(self, api_key: str, base_url: str = "https://api.hiveintelligence.xyz"):
         """Initialize with API key."""
@@ -234,7 +234,7 @@ class HiveIntelligenceAPIWrapper:
             raise ToolException(f"Unexpected error: {e}")
 
 
-class HiveIntelligence(BaseTool):
+class HiveSearch(BaseTool):
     """Tool that queries the Hive Intelligence API to access blockchain and crypto data.
     
     Setup:
@@ -246,16 +246,16 @@ class HiveIntelligence(BaseTool):
     
     Instantiate:
         ```python
-        from langchain_your_module import HiveIntelligence
+        from langchain_hive import HiveSearch
         
         # Basic usage with API key
-        tool = HiveIntelligence(
+        tool = HiveSearch(
             api_key="your-api-key"
         )
         
         # Or with environment variable
         import os
-        tool = HiveIntelligence(
+        tool = HiveSearch(
             api_key=os.environ["HIVE_INTELLIGENCE_API_KEY"]
         )
         ```
@@ -276,7 +276,7 @@ class HiveIntelligence(BaseTool):
         ```
     """
 
-    name: str = "hive_intelligence"
+    name: str = "hive_search"
     description: str = (
         "A tool that queries blockchain and cryptocurrency data. "
         "Useful for getting current token prices, historical data, protocol statistics, "
@@ -284,7 +284,7 @@ class HiveIntelligence(BaseTool):
         "Input can be a direct question or a conversation history."
     )
     
-    args_schema: Type[BaseModel] = HiveIntelligenceInput
+    args_schema: Type[BaseModel] = HiveSearchInput
     handle_tool_error: bool = True
     
     api_key: str = Field(..., description="API key for Hive Intelligence")
@@ -293,14 +293,14 @@ class HiveIntelligence(BaseTool):
         description="Base URL for the Hive Intelligence API"
     )
     
-    api_wrapper: HiveIntelligenceAPIWrapper = Field(default=None)
+    api_wrapper: HiveSearchAPIWrapper = Field(default=None)
     
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         
         # Initialize API wrapper if not provided
         if self.api_wrapper is None:
-            self.api_wrapper = HiveIntelligenceAPIWrapper(
+            self.api_wrapper = HiveSearchAPIWrapper(
                 api_key=self.api_key,
                 base_url=self.base_url
             )

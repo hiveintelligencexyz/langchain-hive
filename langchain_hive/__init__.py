@@ -1,1 +1,1 @@
-from langchain_hive.hive import HiveIntelligence, HiveIntelligenceMessage
+from langchain_hive.hive import HiveSearch
